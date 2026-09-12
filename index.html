@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script>
+let score = 0
+let resetcheck = 0
+let clickvalue = 1
+let upgradecost = 50
+let modecount = 0
+</script>
+
+<h1>Simple Clicker Game</h1>
+<p>Designed for School Use</p><br><br>
+
+<h2 id="scr">Score: 0</h2>
+<h3 id="pwr">Click Power: 1</h3>
+<h3 id="upgrd">Points Required to Next Upgrade: 50</h3>
+<br>
+
+<!--score button-->
+<button style="width: 100px; height: 100px; font-size: 25px;" onclick="score = score + clickvalue;
+resetcheck = 0;
+scr.innerText = 'Score: ' + score;
+if (score >= upgradecost)
+{upgrd.innerText = 'Points Required to Next Upgrade: Upgrade Can be Bought!'}
+else
+{upgrd.innerText = 'Points Required to Next Upgrade: ' + (upgradecost - score);}
+if (modecount % 2 != 0)
+{this.blur();}">Click to Score</button>
+<br><br>
+
+<!--+1 upgrade button-->
+<button style="font-size: 20px;"
+onclick="if (score >= upgradecost)
+{score = score - upgradecost;
+clickvalue = clickvalue + 1; upgradecost = Math.round(upgradecost * 1.5);
+scr.innerText = 'Score: ' + score; pwr.innerText = 'Click Power: ' + clickvalue;
+if (score >= upgradecost)
+{upgrd.innerText = 'Points Required to Next Upgrade: Upgrade Can be Bought!'}
+else
+{upgrd.innerText = 'Points Required to Next Upgrade: ' + (upgradecost - score);}
+}
+else
+{alert('You don\'t have enough! Required: ' + (upgradecost-score) + ' points');}">+1 Click Power</button>
+<br><br>
+
+<!--hard mode button-->
+<button style="position: fixed; bottom: 10px; left: 10px; font-size: 15px;"
+onclick="modecount = modecount + 1
+if (modecount % 2 == 0)
+{alert('Toggled to Easy Mode');}
+else
+{alert('Toggled to Hard Mode');}">Toggle Difficulty</button>
+
+<!--reset button-->
+<button style="position: fixed; bottom: 10px; right: 10px; font-size: 15px;"
+onclick="if (resetcheck == 1)
+{score = 0; upgradecost = 50; clickvalue = 1;
+resetcheck = 0;
+scr.innerText = 'Score: 0';
+upgrd.innerText = 'Points Required to Next Upgrade: 50';
+pwr.innerText = 'Click Power: 1';
+alert('Score reset!');} else {resetcheck = resetcheck + 1; alert('Warning: this will reset your score permanently! Press again to reset');}">Click to Reset</button>
+
+<!--panic button-->
+<button style="position: fixed; bottom: 10px; left: 230px; font-size: 15px;"
+onclick="window.open('about:blank', '_self');"
+>PRESS WHEN IN TROUBLE</button>
+
+</body>
+</html>
