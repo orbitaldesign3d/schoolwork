@@ -11,11 +11,12 @@ let modecount = 0
 </script>
 
 <h1>Simple Clicker Game</h1>
-<p>Designed for School Use</p><br><br>
+<p>Designed for School Use</p><br>
 
 <h2 id="scr">Score: 0</h2>
 <h3 id="pwr">Click Power: 1</h3>
 <h3 id="upgrd">Points Required to Next Upgrade: 50</h3>
+<h3 id="mode">Hard Mode : OFF</h3>
 <br>
 
 <!--score button-->
@@ -49,9 +50,9 @@ else
 <button style="position: fixed; bottom: 10px; left: 10px; font-size: 15px;"
 onclick="modecount = modecount + 1
 if (modecount % 2 == 0)
-{alert('Toggled to Easy Mode');}
+{mode.innerText = 'Hard Mode: OFF';}
 else
-{alert('Toggled to Hard Mode');}">Toggle Difficulty</button>
+{mode.innerText = 'Hard Mode: ON';}">Toggle Difficulty</button>
 
 <!--reset button-->
 <button style="position: fixed; bottom: 10px; right: 10px; font-size: 15px;"
