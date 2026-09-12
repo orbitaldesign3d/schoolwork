@@ -9,6 +9,8 @@ let clickvalue = 1
 let plusonecost = 50
 let xtwocost = 500
 let modecount = 0
+let totalclicks = 0
+let plusonepurchases = 0
 </script>
 
 <h1>Simple Clicker Game</h1>
@@ -22,7 +24,8 @@ let modecount = 0
 
 <!--score button-->
 <button style="position: fixed; bottom: 150px; left: 10px;
-width: 100px; height: 100px; font-size: 25px;" onclick="score = score + clickvalue;
+width: 100px; height: 100px; font-size: 25px;" onclick="totalclicks = totalclicks + 1;
+score = score + clickvalue;
 resetcheck = 0;
 scr.innerText = 'Score: ' + score;
 if (score >= plusonecost)
@@ -39,7 +42,8 @@ if (modecount % 2 != 0)
 <!--+1 upgrade button-->
 <button style="position: fixed; bottom: 100px; left: 10px; font-size: 20px;"
 onclick="if (score >= plusonecost)
-{score = score - plusonecost;
+{plusonepurchases = plusonepurchases +1;
+score = score - plusonecost;
 clickvalue = clickvalue + 1; plusonecost = Math.round(plusonecost * 1.5);
 scr.innerText = 'Score: ' + score; pwr.innerText = 'Click Power: ' + clickvalue;
 if (score >= plusonecost)
@@ -94,6 +98,10 @@ alert('Score reset!');} else {resetcheck = resetcheck + 1; alert('Warning: this 
 <button style="position: fixed; top: 10px; right: 10px; font-size: 15px;"
 onclick="window.open('https://www.classroom.google.com/h', '_self');"
 >PRESS WHEN IN TROUBLE OR CLICK ESC</button>
+
+<!--stats button-->
+<button style="position: fixed; bottom: 10px; right: 120px; font-size: 15px;"
+onclick="alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrade purchases: ' + plusonepurchases)">Click to See Stats</button>
 
 <script>
 window.addEventListener("keydown", function(event) {
