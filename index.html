@@ -6,44 +6,69 @@
 let score = 0
 let resetcheck = 0
 let clickvalue = 1
-let upgradecost = 50
+let plusonecost = 50
+let xtwocost = 500
 let modecount = 0
 </script>
 
 <h1>Simple Clicker Game</h1>
-<p>Designed for School Use</p><br>
+<p>Designed for School Use</p>
 
 <h2 id="scr">Score: 0</h2>
 <h3 id="pwr">Click Power: 1</h3>
-<h3 id="upgrd">Points Required to Next Upgrade: 50</h3>
+<h3 id="upgrdplusone">Points Required to Next +1 Upgrade: 50</h3>
+<h3 id="upgrdxtwo">Points Required to Next x2 Upgrade: 500</h3>
 <h3 id="mode">Hard Mode : OFF</h3>
 
 <!--score button-->
-<button style="position: fixed; bottom: 100px; left: 10px;
+<button style="position: fixed; bottom: 150px; left: 10px;
 width: 100px; height: 100px; font-size: 25px;" onclick="score = score + clickvalue;
 resetcheck = 0;
 scr.innerText = 'Score: ' + score;
-if (score >= upgradecost)
-{upgrd.innerText = 'Points Required to Next Upgrade: Upgrade Can be Bought!'}
+if (score >= plusonecost)
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!'}
 else
-{upgrd.innerText = 'Points Required to Next Upgrade: ' + (upgradecost - score);}
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
+if (score >= xtwocost)
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!'}
+else
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}
 if (modecount % 2 != 0)
 {this.blur();}">Click to Score</button>
 
 <!--+1 upgrade button-->
-<button style="position: fixed; bottom: 50px; left: 10px; font-size: 20px;"
-onclick="if (score >= upgradecost)
-{score = score - upgradecost;
-clickvalue = clickvalue + 1; upgradecost = Math.round(upgradecost * 1.5);
+<button style="position: fixed; bottom: 100px; left: 10px; font-size: 20px;"
+onclick="if (score >= plusonecost)
+{score = score - plusonecost;
+clickvalue = clickvalue + 1; plusonecost = Math.round(plusonecost * 1.5);
 scr.innerText = 'Score: ' + score; pwr.innerText = 'Click Power: ' + clickvalue;
-if (score >= upgradecost)
-{upgrd.innerText = 'Points Required to Next Upgrade: Upgrade Can be Bought!'}
+if (score >= plusonecost)
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!'}
 else
-{upgrd.innerText = 'Points Required to Next Upgrade: ' + (upgradecost - score);}
-}
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
+if (score >= xtwocost)
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!'}
 else
-{alert('You don\'t have enough! Required: ' + (upgradecost-score) + ' points');}">+1 Click Power</button>
-<br><br>
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}}
+else
+{alert('You don\'t have enough! Required: ' + (plusonecost-score) + ' points');}">+1 Click Power</button>
+
+<!--x2 upgrade button-->
+<button style="position: fixed; bottom: 50px; left: 10px; font-size: 20px;"
+onclick="if (score >= xtwocost)
+{score = score - xtwocost;
+clickvalue = clickvalue * 2; xtwocost = Math.round(xtwocost * 2.5);
+scr.innerText = 'Score: ' + score; pwr.innerText = 'Click Power: ' + clickvalue;
+if (score >= plusonecost)
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!'}
+else
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
+if (score >= xtwocost)
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!'}
+else
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}}
+else
+{alert('You don\'t have enough! Required: ' + (xtwocost-score) + ' points');}">x2 Click Power</button>
 
 <!--hard mode button-->
 <button style="position: fixed; bottom: 10px; left: 10px; font-size: 15px;"
@@ -56,11 +81,13 @@ else
 <!--reset button-->
 <button style="position: fixed; bottom: 10px; right: 10px; font-size: 15px;"
 onclick="if (resetcheck == 1)
-{score = 0; upgradecost = 50; clickvalue = 1;
+{score = 0; plusonecost = 50; xtwocost = 500; clickvalue = 1; modecount = 0;
 resetcheck = 0;
 scr.innerText = 'Score: 0';
-upgrd.innerText = 'Points Required to Next Upgrade: 50';
+upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: 50';
+upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: 500';
 pwr.innerText = 'Click Power: 1';
+mode.innerText = 'Hard Mode: OFF';
 alert('Score reset!');} else {resetcheck = resetcheck + 1; alert('Warning: this will reset your score permanently! Press again to reset');}">Click to Reset</button>
 
 <!--panic button-->
