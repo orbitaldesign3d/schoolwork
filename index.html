@@ -17,10 +17,10 @@ let modecount = 0
 <h3 id="pwr">Click Power: 1</h3>
 <h3 id="upgrd">Points Required to Next Upgrade: 50</h3>
 <h3 id="mode">Hard Mode : OFF</h3>
-<br>
 
 <!--score button-->
-<button style="width: 100px; height: 100px; font-size: 25px;" onclick="score = score + clickvalue;
+<button style="position: fixed; bottom: 100px; left: 10px;
+width: 100px; height: 100px; font-size: 25px;" onclick="score = score + clickvalue;
 resetcheck = 0;
 scr.innerText = 'Score: ' + score;
 if (score >= upgradecost)
@@ -29,10 +29,9 @@ else
 {upgrd.innerText = 'Points Required to Next Upgrade: ' + (upgradecost - score);}
 if (modecount % 2 != 0)
 {this.blur();}">Click to Score</button>
-<br><br>
 
 <!--+1 upgrade button-->
-<button style="font-size: 20px;"
+<button style="position: fixed; bottom: 50px; left: 10px; font-size: 20px;"
 onclick="if (score >= upgradecost)
 {score = score - upgradecost;
 clickvalue = clickvalue + 1; upgradecost = Math.round(upgradecost * 1.5);
