@@ -11,6 +11,7 @@ let xtwocost = 500
 let modecount = 0
 let totalclicks = 0
 let plusonepurchases = 0
+let xtwopurchases = 0
 </script>
 
 <h1>Simple Clicker Game</h1>
@@ -60,7 +61,8 @@ else
 <!--x2 upgrade button-->
 <button style="position: fixed; bottom: 50px; left: 10px; font-size: 20px;"
 onclick="if (score >= xtwocost)
-{score = score - xtwocost;
+{xtwopurchases = xtwopurchases + 1;
+score = score - xtwocost;
 clickvalue = clickvalue * 2; xtwocost = Math.round(xtwocost * 2.5);
 scr.innerText = 'Score: ' + score; pwr.innerText = 'Click Power: ' + clickvalue;
 if (score >= plusonecost)
@@ -92,7 +94,7 @@ upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: 50';
 upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: 500';
 pwr.innerText = 'Click Power: 1';
 mode.innerText = 'Hard Mode: OFF';
-alert('Score reset!');} else {resetcheck = resetcheck + 1; alert('Warning: this will reset your score permanently! Press again to reset');}">Click to Reset</button>
+alert('Reset!');} else {resetcheck = resetcheck + 1; alert('Warning: this will reset your progress permanently! Note: Stats will remain the same. Press again to reset');}">Click to Reset</button>
 
 <!--panic button-->
 <button style="position: fixed; top: 10px; right: 10px; font-size: 15px;"
@@ -101,13 +103,35 @@ onclick="window.open('https://www.classroom.google.com/h', '_self');"
 
 <!--stats button-->
 <button style="position: fixed; bottom: 10px; right: 120px; font-size: 15px;"
-onclick="alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrade purchases: ' + plusonepurchases)">Click to See Stats</button>
+onclick="alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrade purchases: ' + plusonepurchases + '\nx2 Upgrade purchases: ' + xtwopurchases)">Click to See Stats</button>
 
+<!--event listeners for panic and dev mode-->
 <script>
 window.addEventListener("keydown", function(event) {
 if (event.key === "Escape" || event.key === "Esc") {
 window.open('https://www.classroom.google.com/h', '_self');}});
+
+window.addEventListener("keydown", function(event) {
+if (event.altKey && event.shiftKey && event.key.toLowerCase() === 'd') {
+alert('Developer Mode enabled. Warning: Dev Mode may cause your game to lag extensively, freeze, or reset.');
+var scoreinput = Number(prompt("Enter score:"));
+score = scoreinput;
+scr.innerText = 'Score: ' + score;
+var clickpowerinput = Number(prompt("Enter click power:"));
+clickvalue = clickpowerinput;
+pwr.innerText = 'Click Power: ' + clickvalue;
+if (score >= plusonecost)
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!';}
+else
+{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
+if (score >= xtwocost)
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!';}
+else
+{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}
+alert("Press alt + shift + d again to reenter variables.")
+}});
 </script>
 
 </body>
 </html>
+
