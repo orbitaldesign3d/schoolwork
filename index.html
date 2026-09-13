@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Simple School Clicker Game</title>
+  <title>Schoolwork</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      margin-bottom: 80px;
+      margin-bottom: 80px; /* Leaves room so the bottom buttons don't block text */
     }
 
     /* Scrollable shop panel setup */
@@ -19,7 +19,7 @@
       padding: 15px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 15px; /* Spaces out items naturally without layout overlaps */
       margin-top: 15px;
     }
 
@@ -50,6 +50,7 @@
       background-color: #0056b3;
     }
 
+    /* Centers the utility buttons perfectly at the bottom center of the screen */
     .bottom-button-container {
       position: fixed;
       bottom: 15px;         
@@ -99,16 +100,19 @@
 <script>
 // Game state variables
 let score = 0;
+let autoclick = 0;
 let resetcheck = 0;
 let clickvalue = 1;
 let pluscost = 50;
 let xtwocost = 500;
-let plustencost = 500; 
+let plustencost = 500;
+let oneautocost = 100;
 let modecount = 0;
 let totalclicks = 0;
 let plusonepurchases = 0;
 let xtwopurchases = 0;
-let plustenpurchases = 0; 
+let plustenpurchases = 0;
+let oneautopurchases = 0;
 </script>
 
 <h1>Simple Clicker Game</h1>
@@ -118,6 +122,7 @@ let plustenpurchases = 0;
 <h2 id="scr">Score: 0</h2>
 <h3 id="pwr">Click Power: 1</h3>
 <h3 id="upgrdplusone">Points Required to Next +1 Upgrade: 50</h3>
+<h3 id="upgrdoneauto">Points Required to Next +1 Autoclick/Second: 100</h3> 
 <h3 id="upgrdxtwo">Points Required to Next x2 Upgrade: 500</h3>
 <h3 id="upgrdplusten">Points Required to Next +10 Upgrade: 500</h3> 
 <h3 id="mode">Hard Mode : OFF</h3>
@@ -134,8 +139,8 @@ let plustenpurchases = 0;
     if (modecount % 2 != 0) { this.blur(); }
   ">Click to Score</button>
 
-  <!-- +1 Upgrade Button -->
-  <button class="scroll-btn" onclick="
+  <!-- +1 Upgrade Button (With Dynamic Price ID) -->
+  <button id="btn-plusone" class="scroll-btn" onclick="
     if (score >= pluscost) {
       plusonepurchases++;
       score -= pluscost;
@@ -145,10 +150,23 @@ let plustenpurchases = 0;
     } else {
       alert('You don\'t have enough! Required: ' + (pluscost - score) + ' points');
     }
-  ">+1 Click Power</button>
+  ">+1 Click Power (50)</button>
+  
+    <!-- +1 Autoclick Upgrade Button (With Dynamic Price ID) -->
+  	<button id="btn-plusoneauto" class="scroll-btn" onclick="
+    	if (score >= oneautocost) {
+      	oneautopurchases++;
+      	score -= oneautocost;
+      	autoclick += 1; 
+      	oneautocost = Math.round(oneautocost * 1.5);
+      	updateUI();
+    } else {
+      alert('You don\'t have enough! Required: ' + (oneautocost - 		score) + ' points');
+    }
+  ">+1 Autoclick/Second (100)</button>
 
-  <!-- x2 Upgrade Button -->
-  <button class="scroll-btn" onclick="
+  <!-- x2 Upgrade Button (With Dynamic Price ID) -->
+  <button id="btn-xtwo" class="scroll-btn" onclick="
     if (score >= xtwocost) {
       xtwopurchases++;
       score -= xtwocost;
@@ -158,10 +176,10 @@ let plustenpurchases = 0;
     } else {
       alert('You don\'t have enough! Required: ' + (xtwocost - score) + ' points');
     }
-  ">x2 Click Power</button>
+  ">x2 Click Power (500)</button>
 
-  <!-- +10 Upgrade Button -->
-  <button class="scroll-btn" onclick="
+  <!-- +10 Upgrade Button (With Dynamic Price ID) -->
+  <button id="btn-plusten" class="scroll-btn" onclick="
     if (score >= plustencost) {
       plustenpurchases++;
       score -= plustencost;
@@ -171,7 +189,7 @@ let plustenpurchases = 0;
     } else {
       alert('You don\'t have enough! Required: ' + (plustencost - score) + ' points');
     }
-  ">+10 Click Power</button>
+  ">+10 Click Power (500)</button>
 
 </div>
 
@@ -188,12 +206,12 @@ let plustenpurchases = 0;
   ">Toggle Difficulty</button>
 
   <button class="bottom-btn" onclick="
-    alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrades: ' + plusonepurchases + '\nx2 Upgrades: ' + xtwopurchases + '\n+10 Upgrades: ' + plustenpurchases);
+    alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrades: ' + plusonepurchases + '\nx2 Upgrades: ' + xtwopurchases + '\n+10 Upgrades: ' + plustenpurchases + '\nClicks/Second: ' + oneautopurchases);
   ">Click to See Stats</button>
 
   <button class="bottom-btn" onclick="
     if (resetcheck == 1) {
-      score = 0; pluscost = 50; xtwocost = 500; plustencost = 500; clickvalue = 1; modecount = 0; resetcheck = 0;
+      score = 0; autoclick = 0; pluscost = 50; xtwocost = 500; plustencost = 500; oneautocost = 100; clickvalue = 1; modecount = 0; resetcheck = 0;
       updateUI();
       mode.innerText = 'Hard Mode: OFF';
       alert('Reset!');
@@ -205,15 +223,42 @@ let plustenpurchases = 0;
 </div>
 
 <script>
-// Refreshes HUD labels accurately 
+// Refreshes HUD labels and dynamically updates cost markers + buy indicators inside buttons
 function updateUI() {
   scr.innerText = 'Score: ' + score;
   pwr.innerText = 'Click Power: ' + clickvalue;
   
+  // +1 Button Dynamic Status Label
+  let plusoneStatus = (score >= pluscost) ? ' [CAN BUY]' : ' (' + pluscost + ')';
+  document.getElementById('btn-plusone').innerText = '+1 Click Power' + plusoneStatus;
+
+  // x2 Button Dynamic Status Label
+  let xtwoStatus = (score >= xtwocost) ? ' [CAN BUY]' : ' (' + xtwocost + ')';
+  document.getElementById('btn-xtwo').innerText = 'x2 Click Power' + xtwoStatus;
+
+  // +10 Button Dynamic Status Label
+  let plustenStatus = (score >= plustencost) ? ' [CAN BUY]' : ' (' + plustencost + ')';
+  document.getElementById('btn-plusten').innerText = '+10 Click Power' + plustenStatus;
+
+  // +1 Autoclicker Button Dynamic Status Label
+  let autoStatus = (score >= oneautocost) ? ' [CAN BUY]' : ' (' + oneautocost + ')';
+  document.getElementById('btn-plusoneauto').innerText = '+1 Autoclick/Second' + autoStatus;
+
+  // Fallback status texts tracking requirements
   upgrdplusone.innerText = (score >= pluscost) ? 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +1 Upgrade: ' + (pluscost - score);
   upgrdxtwo.innerText = (score >= xtwocost) ? 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);
   upgrdplusten.innerText = (score >= plustencost) ? 'Points Required to Next +10 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +10 Upgrade: ' + (plustencost - score);
+  upgrdoneauto.innerText = (score >= oneautocost) ? 'Points Required to Next +1 Autoclick/Second: Upgrade Can be Bought!' : 'Points Required to Next +1 Autoclick/Second: ' + (oneautocost - score);
 }
+
+// PASSIVE AUTOCLICK ENGINE 
+// Fires precisely every 1,000ms (1 second) to automatically add points
+setInterval(function() {
+  if (autoclick > 0) {
+    score += autoclick;
+    updateUI();
+  }
+}, 1000);
 
 // Panic redirects directly to Google Classroom dashboard layout
 function panic() {
@@ -230,9 +275,13 @@ window.addEventListener("keydown", function(event) {
     alert('Developer Mode enabled.');
     score = Number(prompt("Enter score:", score));
     clickvalue = Number(prompt("Enter click power:", clickvalue));
+    autoclick = Number(prompt("Enter automated autoclicks per second:", autoclick));
     updateUI();
   }
 });
+
+// Run an initial interface evaluation calculation on boot up
+updateUI();
 </script>
 
 </body>
