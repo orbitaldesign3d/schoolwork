@@ -1,17 +1,45 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <style>
+
+    .vertical-scroll-box {
+      overflow-y: scroll; 
+      height: 250px; 
+      border: 2px solid #ccc;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .scroll-btn {
+      font-size: 20px;
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+    .main-clicker {
+      height: 80px; 
+      font-size: 25px;
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
 <body>
 
 <script>
-let score = 0
-let resetcheck = 0
-let clickvalue = 1
-let plusonecost = 50
-let xtwocost = 500
-let modecount = 0
-let totalclicks = 0
-let plusonepurchases = 0
-let xtwopurchases = 0
+
+let score = 0;
+let resetcheck = 0;
+let clickvalue = 1;
+let pluscost = 50;
+let xtwocost = 500;
+let plustencost = 500;
+let modecount = 0;
+let totalclicks = 0;
+let plusonepurchases = 0;
+let xtwopurchases = 0;
+let plustenpurchases = 0;
 </script>
 
 <h1>Simple Clicker Game</h1>
@@ -21,117 +49,116 @@ let xtwopurchases = 0
 <h3 id="pwr">Click Power: 1</h3>
 <h3 id="upgrdplusone">Points Required to Next +1 Upgrade: 50</h3>
 <h3 id="upgrdxtwo">Points Required to Next x2 Upgrade: 500</h3>
+<h3 id="upgrdplusten">Points Required to Next +10 Upgrade: 500</h3> <!-- Fixed duplicate ID -->
 <h3 id="mode">Hard Mode : OFF</h3>
 
-<!--score button-->
-<button style="position: fixed; bottom: 150px; left: 10px;
-width: 100px; height: 100px; font-size: 25px;" onclick="totalclicks = totalclicks + 1;
-score = score + clickvalue;
-resetcheck = 0;
-scr.innerText = 'Score: ' + score;
-if (score >= plusonecost)
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!'}
-else
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
-if (score >= xtwocost)
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!'}
-else
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}
-if (modecount % 2 != 0)
-{this.blur();}">Click to Score</button>
+<!-- The Scroll Container -->
+<div class="vertical-scroll-box">
 
-<!--+1 upgrade button-->
-<button style="position: fixed; bottom: 100px; left: 10px; font-size: 20px;"
-onclick="if (score >= plusonecost)
-{plusonepurchases = plusonepurchases +1;
-score = score - plusonecost;
-clickvalue = clickvalue + 1; plusonecost = Math.round(plusonecost * 1.5);
-scr.innerText = 'Score: ' + score; pwr.innerText = 'Click Power: ' + clickvalue;
-if (score >= plusonecost)
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!'}
-else
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
-if (score >= xtwocost)
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!'}
-else
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}}
-else
-{alert('You don\'t have enough! Required: ' + (plusonecost-score) + ' points');}">+1 Click Power</button>
+  <!-- Main Score Button -->
+  <button class="scroll-btn main-clicker" onclick="
+    totalclicks++;
+    score += clickvalue;
+    resetcheck = 0;
+    updateUI();
+    if (modecount % 2 != 0) { this.blur(); }
+  ">Click to Score</button>
 
-<!--x2 upgrade button-->
-<button style="position: fixed; bottom: 50px; left: 10px; font-size: 20px;"
-onclick="if (score >= xtwocost)
-{xtwopurchases = xtwopurchases + 1;
-score = score - xtwocost;
-clickvalue = clickvalue * 2; xtwocost = Math.round(xtwocost * 2.5);
-scr.innerText = 'Score: ' + score; pwr.innerText = 'Click Power: ' + clickvalue;
-if (score >= plusonecost)
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!'}
-else
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
-if (score >= xtwocost)
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!'}
-else
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}}
-else
-{alert('You don\'t have enough! Required: ' + (xtwocost-score) + ' points');}">x2 Click Power</button>
+  <!-- +1 Upgrade Button -->
+  <button class="scroll-btn" onclick="
+    if (score >= pluscost) {
+      plusonepurchases++;
+      score -= pluscost;
+      clickvalue += 1; 
+      pluscost = Math.round(pluscost * 1.5);
+      updateUI();
+    } else {
+      alert('You don\'t have enough! Required: ' + (pluscost - score) + ' points');
+    }
+  ">+1 Click Power</button>
 
-<!--hard mode button-->
-<button style="position: fixed; bottom: 10px; left: 10px; font-size: 15px;"
-onclick="modecount = modecount + 1
-if (modecount % 2 == 0)
-{mode.innerText = 'Hard Mode: OFF';}
-else
-{mode.innerText = 'Hard Mode: ON';}">Toggle Difficulty</button>
+  <!-- x2 Upgrade Button -->
+  <button class="scroll-btn" onclick="
+    if (score >= xtwocost) {
+      xtwopurchases++;
+      score -= xtwocost;
+      clickvalue *= 2; 
+      xtwocost = Math.round(xtwocost * 2.5);
+      updateUI();
+    } else {
+      alert('You don\'t have enough! Required: ' + (xtwocost - score) + ' points');
+    }
+  ">x2 Click Power</button>
 
-<!--reset button-->
-<button style="position: fixed; bottom: 10px; right: 10px; font-size: 15px;"
-onclick="if (resetcheck == 1)
-{score = 0; plusonecost = 50; xtwocost = 500; clickvalue = 1; modecount = 0;
-resetcheck = 0;
-scr.innerText = 'Score: 0';
-upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: 50';
-upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: 500';
-pwr.innerText = 'Click Power: 1';
-mode.innerText = 'Hard Mode: OFF';
-alert('Reset!');} else {resetcheck = resetcheck + 1; alert('Warning: this will reset your progress permanently! Note: Stats will remain the same. Press again to reset');}">Click to Reset</button>
+  <!-- +10 Upgrade Button -->
+  <button class="scroll-btn" onclick="
+    if (score >= plustencost) {
+      plustenpurchases++;
+      score -= plustencost;
+      clickvalue += 10; 
+      plustencost = Math.round(plustencost * 1.8); // Independent balancing scale
+      updateUI();
+    } else {
+      alert('You don\'t have enough! Required: ' + (plustencost - score) + ' points');
+    }
+  ">+10 Click Power</button>
+</div>
 
-<!--panic button-->
-<button style="position: fixed; top: 10px; right: 10px; font-size: 15px;"
-onclick="window.open('https://www.classroom.google.com/h', '_self');"
->PRESS WHEN IN TROUBLE OR CLICK ESC</button>
+<button style="position: fixed; bottom: 10px; left: 10px; font-size: 15px;" onclick="
+  modecount++;
+  mode.innerText = (modecount % 2 == 0) ? 'Hard Mode: OFF' : 'Hard Mode: ON';
+">Toggle Difficulty</button>
 
-<!--stats button-->
-<button style="position: fixed; bottom: 10px; right: 120px; font-size: 15px;"
-onclick="alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrade purchases: ' + plusonepurchases + '\nx2 Upgrade purchases: ' + xtwopurchases)">Click to See Stats</button>
+<button style="position: fixed; bottom: 10px; right: 120px; font-size: 15px;" onclick="
+  alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrades: ' + plusonepurchases + '\nx2 Upgrades: ' + xtwopurchases + '\n+10 Upgrades: ' + plustenpurchases)
+">Click to See Stats</button>
 
-<!--event listeners for panic and dev mode-->
+<button style="position: fixed; bottom: 10px; right: 10px; font-size: 15px;" onclick="
+  if (resetcheck == 1) {
+    score = 0; pluscost = 50; xtwocost = 500; plustencost = 500; clickvalue = 1; modecount = 0; resetcheck = 0;
+    updateUI();
+    mode.innerText = 'Hard Mode: OFF';
+    alert('Reset!');
+  } else {
+    resetcheck++; 
+    alert('Warning: This will reset progress! Click again to confirm.');
+  }
+">Click to Reset</button>
+
+<button style="position: fixed; top: 10px; right: 10px; font-size: 15px; background-color: #ff4444; color: white; font-weight: bold;" onclick="panic();">
+  PRESS WHEN IN TROUBLE OR CLICK ESC
+</button>
+
 <script>
-window.addEventListener("keydown", function(event) {
-if (event.key === "Escape" || event.key === "Esc") {
-window.open('https://www.classroom.google.com/h', '_self');}});
+// Centralized function to dynamically update all tracking text without code duplication
+function updateUI() {
+  scr.innerText = 'Score: ' + score;
+  pwr.innerText = 'Click Power: ' + clickvalue;
+  
+  upgrdplusone.innerText = (score >= pluscost) ? 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +1 Upgrade: ' + (pluscost - score);
+  upgrdxtwo.innerText = (score >= xtwocost) ? 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);
+  upgrdplusten.innerText = (score >= plustencost) ? 'Points Required to Next +10 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +10 Upgrade: ' + (plustencost - score);
+}
 
+function panic() {
+  window.open('https://www.classroom.google.com/h', '_self');
+}
+
+// Panic button event listener
 window.addEventListener("keydown", function(event) {
-if (event.altKey && event.shiftKey && event.key.toLowerCase() === 'd') {
-alert('Developer Mode enabled. Warning: Dev Mode may cause your game to lag extensively, freeze, or reset.');
-var scoreinput = Number(prompt("Enter score:"));
-score = scoreinput;
-scr.innerText = 'Score: ' + score;
-var clickpowerinput = Number(prompt("Enter click power:"));
-clickvalue = clickpowerinput;
-pwr.innerText = 'Click Power: ' + clickvalue;
-if (score >= plusonecost)
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!';}
-else
-{upgrdplusone.innerText = 'Points Required to Next +1 Upgrade: ' + (plusonecost - score);}
-if (score >= xtwocost)
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!';}
-else
-{upgrdxtwo.innerText = 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);}
-alert("Press alt + shift + d again to reenter variables.")
-}});
+  if (event.key === "Escape" || event.key === "Esc") { panic(); }
+});
+
+// Dev menu handler
+window.addEventListener("keydown", function(event) {
+  if (event.altKey && event.shiftKey && event.key.toLowerCase() === 'd') {
+    alert('Developer Mode enabled.');
+    score = Number(prompt("Enter score:", score));
+    clickvalue = Number(prompt("Enter click power:", clickvalue));
+    updateUI();
+  }
+});
 </script>
 
 </body>
 </html>
-
