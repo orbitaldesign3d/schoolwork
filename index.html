@@ -107,12 +107,14 @@ let pluscost = 50;
 let xtwocost = 500;
 let plustencost = 500;
 let oneautocost = 100;
+let tenautocost = 1000;
 let modecount = 0;
 let totalclicks = 0;
 let plusonepurchases = 0;
 let xtwopurchases = 0;
 let plustenpurchases = 0;
 let oneautopurchases = 0;
+let tenautopurchases = 0;
 </script>
 
 <h1>Simple Clicker Game</h1>
@@ -124,20 +126,21 @@ let oneautopurchases = 0;
 <h3 id="upgrdplusone">Points Required to Next +1 Upgrade: 50</h3>
 <h3 id="upgrdoneauto">Points Required to Next +1 Autoclick/Second: 100</h3> 
 <h3 id="upgrdxtwo">Points Required to Next x2 Upgrade: 500</h3>
-<h3 id="upgrdplusten">Points Required to Next +10 Upgrade: 500</h3> 
+<h3 id="upgrdplusten">Points Required to Next +10 Upgrade: 500</h3>
+<h3 id="upgrdtenauto">Points Required to Next +10 Autoclick/Second: 1000</h3>
 <h3 id="mode">Hard Mode : OFF</h3>
+
+<!-- Main Clicker Button -->
+<button class="scroll-btn main-clicker" onclick="
+  totalclicks++;
+  score += clickvalue;
+  resetcheck = 0;
+  updateUI();
+  if (modecount % 2 != 0) { this.blur(); }
+">Click to Score</button>
 
 <!-- Scrollable Action Box -->
 <div class="vertical-scroll-box">
-
-  <!-- Main Clicker Button -->
-  <button class="scroll-btn main-clicker" onclick="
-    totalclicks++;
-    score += clickvalue;
-    resetcheck = 0;
-    updateUI();
-    if (modecount % 2 != 0) { this.blur(); }
-  ">Click to Score</button>
 
   <!-- +1 Upgrade Button (With Dynamic Price ID) -->
   <button id="btn-plusone" class="scroll-btn" onclick="
@@ -152,16 +155,16 @@ let oneautopurchases = 0;
     }
   ">+1 Click Power (50)</button>
   
-    <!-- +1 Autoclick Upgrade Button (With Dynamic Price ID) -->
-  	<button id="btn-plusoneauto" class="scroll-btn" onclick="
-    	if (score >= oneautocost) {
-      	oneautopurchases++;
-      	score -= oneautocost;
-      	autoclick += 1; 
-      	oneautocost = Math.round(oneautocost * 1.5);
-      	updateUI();
+  <!-- +1 Autoclick Upgrade Button (With Dynamic Price ID) -->
+  <button id="btn-plusoneauto" class="scroll-btn" onclick="
+    if (score >= oneautocost) {
+      oneautopurchases++;
+      score -= oneautocost;
+      autoclick += 1; 
+      oneautocost = Math.round(oneautocost * 1.5);
+      updateUI();
     } else {
-      alert('You don\'t have enough! Required: ' + (oneautocost - 		score) + ' points');
+      alert('You don\'t have enough! Required: ' + (oneautocost - score) + ' points');
     }
   ">+1 Autoclick/Second (100)</button>
 
@@ -190,6 +193,19 @@ let oneautopurchases = 0;
       alert('You don\'t have enough! Required: ' + (plustencost - score) + ' points');
     }
   ">+10 Click Power (500)</button>
+  
+  <!-- +10 Autoclick Upgrade Button (With Dynamic Price ID) -->
+  <button id="btn-plustenauto" class="scroll-btn" onclick="
+    if (score >= tenautocost) {
+      tenautopurchases++;
+      score -= tenautocost;
+      autoclick += 10; 
+      tenautocost = Math.round(tenautocost * 2);
+      updateUI();
+    } else {
+      alert('You don\'t have enough! Required: ' + (tenautocost - score) + ' points');
+    }
+  ">+10 Autoclick/Second (1000)</button>
 
 </div>
 
@@ -202,18 +218,21 @@ let oneautopurchases = 0;
 <div class="bottom-button-container">
   <button class="bottom-btn" onclick="
     modecount++;
-    mode.innerText = (modecount % 2 == 0) ? 'Hard Mode: OFF' : 'Hard Mode: ON';
+    document.getElementById('mode').innerText = (modecount % 2 == 0) ? 'Hard Mode: OFF' : 'Hard Mode: ON';
   ">Toggle Difficulty</button>
 
   <button class="bottom-btn" onclick="
-    alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrades: ' + plusonepurchases + '\nx2 Upgrades: ' + xtwopurchases + '\n+10 Upgrades: ' + plustenpurchases + '\nClicks/Second: ' + oneautopurchases);
+    alert('Stats:\nTotal clicks: ' + totalclicks + '\n+1 Upgrades: ' + plusonepurchases + '\nx2 Upgrades: ' + xtwopurchases + '\n+10 Upgrades: ' + plustenpurchases + '\nAutoclicks/Sec: ' + autoclick);
   ">Click to See Stats</button>
 
   <button class="bottom-btn" onclick="
     if (resetcheck == 1) {
-      score = 0; autoclick = 0; pluscost = 50; xtwocost = 500; plustencost = 500; oneautocost = 100; clickvalue = 1; modecount = 0; resetcheck = 0;
+      score = 0; autoclick = 0; pluscost = 50; xtwocost = 500; plustencost = 500; 
+      oneautocost = 100; tenautocost = 1000; clickvalue = 1; modecount = 0; resetcheck = 0;
+      totalclicks = 0; plusonepurchases = 0; xtwopurchases = 0; plustenpurchases = 0;
+      oneautopurchases = 0; tenautopurchases = 0;
       updateUI();
-      mode.innerText = 'Hard Mode: OFF';
+      document.getElementById('mode').innerText = 'Hard Mode: OFF';
       alert('Reset!');
     } else {
       resetcheck++; 
@@ -225,8 +244,8 @@ let oneautopurchases = 0;
 <script>
 // Refreshes HUD labels and dynamically updates cost markers + buy indicators inside buttons
 function updateUI() {
-  scr.innerText = 'Score: ' + score;
-  pwr.innerText = 'Click Power: ' + clickvalue;
+  document.getElementById('scr').innerText = 'Score: ' + Math.floor(score);
+  document.getElementById('pwr').innerText = 'Click Power: ' + clickvalue;
   
   // +1 Button Dynamic Status Label
   let plusoneStatus = (score >= pluscost) ? ' [CAN BUY]' : ' (' + pluscost + ')';
@@ -243,29 +262,34 @@ function updateUI() {
   // +1 Autoclicker Button Dynamic Status Label
   let autoStatus = (score >= oneautocost) ? ' [CAN BUY]' : ' (' + oneautocost + ')';
   document.getElementById('btn-plusoneauto').innerText = '+1 Autoclick/Second' + autoStatus;
+  
+  // +10 Autoclicker Button Dynamic Status Label
+  let tenAutoStatus = (score >= tenautocost) ? ' [CAN BUY]' : ' (' + tenautocost + ')';
+  document.getElementById('btn-plustenauto').innerText = '+10 Autoclick/Second' + tenAutoStatus;
 
   // Fallback status texts tracking requirements
-  upgrdplusone.innerText = (score >= pluscost) ? 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +1 Upgrade: ' + (pluscost - score);
-  upgrdxtwo.innerText = (score >= xtwocost) ? 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);
-  upgrdplusten.innerText = (score >= plustencost) ? 'Points Required to Next +10 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +10 Upgrade: ' + (plustencost - score);
-  upgrdoneauto.innerText = (score >= oneautocost) ? 'Points Required to Next +1 Autoclick/Second: Upgrade Can be Bought!' : 'Points Required to Next +1 Autoclick/Second: ' + (oneautocost - score);
+  document.getElementById('upgrdplusone').innerText = (score >= pluscost) ? 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +1 Upgrade: ' + (pluscost - score);
+  document.getElementById('upgrdxtwo').innerText = (score >= xtwocost) ? 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);
+  document.getElementById('upgrdplusten').innerText = (score >= plustencost) ? 'Points Required to Next +10 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +10 Upgrade: ' + (plustencost - score);
+  document.getElementById('upgrdoneauto').innerText = (score >= oneautocost) ? 'Points Required to Next +1 Autoclick/Second: Upgrade Can be Bought!' : 'Points Required to Next +1 Autoclick/Second: ' + (oneautocost - score);
+  document.getElementById('upgrdtenauto').innerText = (score >= tenautocost) ? 'Points Required to Next +10 Autoclick/Second: Upgrade Can be Bought!' : 'Points Required to Next +10 Autoclick/Second: ' + (tenautocost - score);
 }
 
-// PASSIVE AUTOCLICK ENGINE 
-// Fires precisely every 1,000ms (1 second) to automatically add points
+// Autoclick engine
+// Changed to add every quarter of a second to look smoother
 setInterval(function() {
   if (autoclick > 0) {
-    score += autoclick;
+    score += (autoclick * 0.25);
     updateUI();
   }
-}, 1000);
+}, 250);
 
-// Panic redirects directly to Google Classroom dashboard layout
+// Panic function to google classroom
 function panic() {
-  window.open('https://google.com', '_self');
+  window.open('https://classroom.google.com', '_self');
 }
 
-// Hotkey mappings
+// Event listeners
 window.addEventListener("keydown", function(event) {
   if (event.key === "Escape" || event.key === "Esc") { panic(); }
 });
@@ -280,7 +304,7 @@ window.addEventListener("keydown", function(event) {
   }
 });
 
-// Run an initial interface evaluation calculation on boot up
+// Run an initial interface evaluation calculation on start
 updateUI();
 </script>
 
