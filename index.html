@@ -7,7 +7,12 @@
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      margin-bottom: 80px; /* Leaves room so the bottom buttons don't block text */
+      margin-bottom: 80px;
+      
+      /* Prevents text highlighting on double-clicking */
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     /* Scrollable shop panel setup */
@@ -19,7 +24,7 @@
       padding: 15px;
       display: flex;
       flex-direction: column;
-      gap: 15px; /* Spaces out items naturally without layout overlaps */
+      gap: 15px;
       margin-top: 15px;
     }
 
@@ -50,7 +55,7 @@
       background-color: #0056b3;
     }
 
-    /* Centers the utility buttons perfectly at the bottom center of the screen */
+    /* Bottom center utility button alignment */
     .bottom-button-container {
       position: fixed;
       bottom: 15px;          
@@ -93,6 +98,30 @@
     .panic-btn:hover {
       background-color: #bd2130;
     }
+
+    /* Floating cursor text animation */
+    .floating-number {
+      position: absolute;
+      font-size: 20px;
+      pointer-events: none;
+      user-select: none;
+      animation: floatAndFade 0.8s ease-out forwards;
+      z-index: 2000;
+    }
+
+    @keyframes floatAndFade {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateY(0) scale(1);
+      }
+      50% {
+        opacity: 0.8;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(-50px) scale(1.2);
+      }
+    }
   </style>
 </head>
 <body>
@@ -107,18 +136,12 @@
 <h3 id="mode">Hard Mode : OFF</h3>
 
 <!-- Main Clicker Button -->
-<button class="scroll-btn main-clicker" onclick="
-  totalclicks++;
-  score += clickvalue;
-  resetcheck = 0;
-  updateUI();
-  if (modecount % 2 != 0) { this.blur(); }
-">Click to Score</button>
+<button class="scroll-btn main-clicker">Click to Score</button>
 
 <!-- Scrollable Action Box -->
 <div class="vertical-scroll-box">
 
-  <!-- +1 Upgrade Button -->
+  <!-- Upgrades -->
   <button id="btn-plusone" class="scroll-btn" onclick="
     if (score >= pluscost) {
       plusonepurchases++;
@@ -131,7 +154,6 @@
     }
   ">+1 Click Power (50)</button>
   
-  <!-- +1 Autoclick Upgrade Button -->
   <button id="btn-plusoneauto" class="scroll-btn" onclick="
     if (score >= oneautocost) {
       oneautopurchases++;
@@ -144,7 +166,6 @@
     }
   ">+1 Autoclick/Second (100)</button>
 
-  <!-- x2 Upgrade Button -->
   <button id="btn-xtwo" class="scroll-btn" onclick="
     if (score >= xtwocost) {
       xtwopurchases++;
@@ -157,7 +178,6 @@
     }
   ">x2 Click Power (500)</button>
 
-  <!-- +10 Upgrade Button -->
   <button id="btn-plusten" class="scroll-btn" onclick="
     if (score >= plustencost) {
       plustenpurchases++;
@@ -170,7 +190,6 @@
     }
   ">+10 Click Power (500)</button>
   
-  <!-- +10 Autoclick Upgrade Button -->
   <button id="btn-plustenauto" class="scroll-btn" onclick="
     if (score >= tenautocost) {
       tenautopurchases++;
@@ -236,7 +255,7 @@ let plustenpurchases = 0;
 let oneautopurchases = 0;
 let tenautopurchases = 0;
 
-// Refreshes HUD labels and dynamically updates cost markers + buy indicators inside buttons
+// Refreshes HUD labels and updates cost markers + buy indicators inside buttons
 function updateUI() {
   document.getElementById('scr').innerText = 'Score: ' + Math.floor(score);
   document.getElementById('pwr').innerText = 'Click Power: ' + clickvalue;
@@ -285,6 +304,60 @@ document.addEventListener("visibilitychange", function() {
     }
     lastUpdate = now;
   }
+});
+
+// Floating cursor text creator
+function spawnFloatingText(x, y, text) {
+  const el = document.createElement("span");
+  el.className = "floating-number";
+  el.innerText = "+" + text;
+  
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+  
+  document.body.appendChild(el);
+  
+  setTimeout(() => {
+    el.remove();
+  }, 800);
+}
+
+// Global Click Listener
+window.addEventListener("click", function(event) {
+  const target = event.target;
+  const isMainTarget = target.classList.contains("main-clicker");
+
+  // Ignore shop/utility buttons so buying items doesn't give click score
+  if (!isMainTarget && target.tagName === "BUTTON") {
+    return;
+  }
+
+  // Calculate score (2x reward for main button target)
+  let pointsGained = isMainTarget ? (clickvalue * 2) : clickvalue;
+
+  if (isMainTarget && modecount % 2 !== 0) {
+    target.blur();
+  }
+
+  totalclicks++;
+  score += pointsGained;
+  resetcheck = 0;
+  updateUI();
+
+  let spawnX = event.pageX;
+  let spawnY = event.pageY;
+
+  // Handle keyboard (Space/Enter) triggers by centering floating text on the main button
+  if (event.detail === 0 || (spawnX === 0 && spawnY === 0)) {
+    const mainBtn = document.querySelector(".main-clicker");
+    if (mainBtn) {
+      const rect = mainBtn.getBoundingClientRect();
+      spawnX = rect.left + window.scrollX + (rect.width / 2);
+      spawnY = rect.top + window.scrollY + (rect.height / 2);
+    }
+  }
+
+  spawnFloatingText(spawnX, spawnY, pointsGained);
 });
 
 // Panic function to Google Classroom
