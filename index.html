@@ -53,7 +53,7 @@
     /* Centers the utility buttons perfectly at the bottom center of the screen */
     .bottom-button-container {
       position: fixed;
-      bottom: 15px;         
+      bottom: 15px;          
       left: 0;
       width: 100%;          
       display: flex;
@@ -97,37 +97,13 @@
 </head>
 <body>
 
-<script>
-// Game state variables
-let score = 0;
-let autoclick = 0;
-let resetcheck = 0;
-let clickvalue = 1;
-let pluscost = 50;
-let xtwocost = 500;
-let plustencost = 500;
-let oneautocost = 100;
-let tenautocost = 1000;
-let modecount = 0;
-let totalclicks = 0;
-let plusonepurchases = 0;
-let xtwopurchases = 0;
-let plustenpurchases = 0;
-let oneautopurchases = 0;
-let tenautopurchases = 0;
-</script>
-
 <h1>Simple Clicker Game</h1>
 <p>Designed for School Use</p>
 
 <!-- Tracking Headers -->
 <h2 id="scr">Score: 0</h2>
 <h3 id="pwr">Click Power: 1</h3>
-<h3 id="upgrdplusone">Points Required to Next +1 Upgrade: 50</h3>
-<h3 id="upgrdoneauto">Points Required to Next +1 Autoclick/Second: 100</h3> 
-<h3 id="upgrdxtwo">Points Required to Next x2 Upgrade: 500</h3>
-<h3 id="upgrdplusten">Points Required to Next +10 Upgrade: 500</h3>
-<h3 id="upgrdtenauto">Points Required to Next +10 Autoclick/Second: 1000</h3>
+<h3 id="auto">Autoclicks/Second: 0</h3>
 <h3 id="mode">Hard Mode : OFF</h3>
 
 <!-- Main Clicker Button -->
@@ -142,7 +118,7 @@ let tenautopurchases = 0;
 <!-- Scrollable Action Box -->
 <div class="vertical-scroll-box">
 
-  <!-- +1 Upgrade Button (With Dynamic Price ID) -->
+  <!-- +1 Upgrade Button -->
   <button id="btn-plusone" class="scroll-btn" onclick="
     if (score >= pluscost) {
       plusonepurchases++;
@@ -151,11 +127,11 @@ let tenautopurchases = 0;
       pluscost = Math.round(pluscost * 1.5);
       updateUI();
     } else {
-      alert('You don\'t have enough! Required: ' + (pluscost - score) + ' points');
+      alert('You don\'t have enough! Required: ' + (pluscost - Math.floor(score)) + ' points');
     }
   ">+1 Click Power (50)</button>
   
-  <!-- +1 Autoclick Upgrade Button (With Dynamic Price ID) -->
+  <!-- +1 Autoclick Upgrade Button -->
   <button id="btn-plusoneauto" class="scroll-btn" onclick="
     if (score >= oneautocost) {
       oneautopurchases++;
@@ -164,11 +140,11 @@ let tenautopurchases = 0;
       oneautocost = Math.round(oneautocost * 1.5);
       updateUI();
     } else {
-      alert('You don\'t have enough! Required: ' + (oneautocost - score) + ' points');
+      alert('You don\'t have enough! Required: ' + (oneautocost - Math.floor(score)) + ' points');
     }
   ">+1 Autoclick/Second (100)</button>
 
-  <!-- x2 Upgrade Button (With Dynamic Price ID) -->
+  <!-- x2 Upgrade Button -->
   <button id="btn-xtwo" class="scroll-btn" onclick="
     if (score >= xtwocost) {
       xtwopurchases++;
@@ -177,11 +153,11 @@ let tenautopurchases = 0;
       xtwocost = Math.round(xtwocost * 2.5);
       updateUI();
     } else {
-      alert('You don\'t have enough! Required: ' + (xtwocost - score) + ' points');
+      alert('You don\'t have enough! Required: ' + (xtwocost - Math.floor(score)) + ' points');
     }
   ">x2 Click Power (500)</button>
 
-  <!-- +10 Upgrade Button (With Dynamic Price ID) -->
+  <!-- +10 Upgrade Button -->
   <button id="btn-plusten" class="scroll-btn" onclick="
     if (score >= plustencost) {
       plustenpurchases++;
@@ -190,11 +166,11 @@ let tenautopurchases = 0;
       plustencost = Math.round(plustencost * 1.8); 
       updateUI();
     } else {
-      alert('You don\'t have enough! Required: ' + (plustencost - score) + ' points');
+      alert('You don\'t have enough! Required: ' + (plustencost - Math.floor(score)) + ' points');
     }
   ">+10 Click Power (500)</button>
   
-  <!-- +10 Autoclick Upgrade Button (With Dynamic Price ID) -->
+  <!-- +10 Autoclick Upgrade Button -->
   <button id="btn-plustenauto" class="scroll-btn" onclick="
     if (score >= tenautocost) {
       tenautopurchases++;
@@ -203,7 +179,7 @@ let tenautopurchases = 0;
       tenautocost = Math.round(tenautocost * 2);
       updateUI();
     } else {
-      alert('You don\'t have enough! Required: ' + (tenautocost - score) + ' points');
+      alert('You don\'t have enough! Required: ' + (tenautocost - Math.floor(score)) + ' points');
     }
   ">+10 Autoclick/Second (1000)</button>
 
@@ -242,54 +218,81 @@ let tenautopurchases = 0;
 </div>
 
 <script>
+// Game state variables
+let score = 0;
+let autoclick = 0;
+let resetcheck = 0;
+let clickvalue = 1;
+let pluscost = 50;
+let xtwocost = 500;
+let plustencost = 500;
+let oneautocost = 100;
+let tenautocost = 1000;
+let modecount = 0;
+let totalclicks = 0;
+let plusonepurchases = 0;
+let xtwopurchases = 0;
+let plustenpurchases = 0;
+let oneautopurchases = 0;
+let tenautopurchases = 0;
+
 // Refreshes HUD labels and dynamically updates cost markers + buy indicators inside buttons
 function updateUI() {
   document.getElementById('scr').innerText = 'Score: ' + Math.floor(score);
   document.getElementById('pwr').innerText = 'Click Power: ' + clickvalue;
+  document.getElementById('auto').innerText = 'Autoclicks/Second: ' + autoclick;
   
-  // +1 Button Dynamic Status Label
-  let plusoneStatus = (score >= pluscost) ? ' [CAN BUY]' : ' (' + pluscost + ')';
-  document.getElementById('btn-plusone').innerText = '+1 Click Power' + plusoneStatus;
-
-  // x2 Button Dynamic Status Label
-  let xtwoStatus = (score >= xtwocost) ? ' [CAN BUY]' : ' (' + xtwocost + ')';
-  document.getElementById('btn-xtwo').innerText = 'x2 Click Power' + xtwoStatus;
-
-  // +10 Button Dynamic Status Label
-  let plustenStatus = (score >= plustencost) ? ' [CAN BUY]' : ' (' + plustencost + ')';
-  document.getElementById('btn-plusten').innerText = '+10 Click Power' + plustenStatus;
-
-  // +1 Autoclicker Button Dynamic Status Label
-  let autoStatus = (score >= oneautocost) ? ' [CAN BUY]' : ' (' + oneautocost + ')';
-  document.getElementById('btn-plusoneauto').innerText = '+1 Autoclick/Second' + autoStatus;
+  let plusoneInfo = (score >= pluscost) ? ' [CAN BUY!]' : ' (Need ' + (pluscost - Math.floor(score)) + ' more)';
+  document.getElementById('btn-plusone').innerText = '+1 Click Power | Cost: ' + pluscost + plusoneInfo;
   
-  // +10 Autoclicker Button Dynamic Status Label
-  let tenAutoStatus = (score >= tenautocost) ? ' [CAN BUY]' : ' (' + tenautocost + ')';
-  document.getElementById('btn-plustenauto').innerText = '+10 Autoclick/Second' + tenAutoStatus;
+  let xtwoInfo = (score >= xtwocost) ? ' [CAN BUY!]' : ' (Need ' + (xtwocost - Math.floor(score)) + ' more)';
+  document.getElementById('btn-xtwo').innerText = 'x2 Click Power | Cost: ' + xtwocost + xtwoInfo;
 
-  // Fallback status texts tracking requirements
-  document.getElementById('upgrdplusone').innerText = (score >= pluscost) ? 'Points Required to Next +1 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +1 Upgrade: ' + (pluscost - score);
-  document.getElementById('upgrdxtwo').innerText = (score >= xtwocost) ? 'Points Required to Next x2 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next x2 Upgrade: ' + (xtwocost - score);
-  document.getElementById('upgrdplusten').innerText = (score >= plustencost) ? 'Points Required to Next +10 Upgrade: Upgrade Can be Bought!' : 'Points Required to Next +10 Upgrade: ' + (plustencost - score);
-  document.getElementById('upgrdoneauto').innerText = (score >= oneautocost) ? 'Points Required to Next +1 Autoclick/Second: Upgrade Can be Bought!' : 'Points Required to Next +1 Autoclick/Second: ' + (oneautocost - score);
-  document.getElementById('upgrdtenauto').innerText = (score >= tenautocost) ? 'Points Required to Next +10 Autoclick/Second: Upgrade Can be Bought!' : 'Points Required to Next +10 Autoclick/Second: ' + (tenautocost - score);
+  let plustenInfo = (score >= plustencost) ? ' [CAN BUY!]' : ' (Need ' + (plustencost - Math.floor(score)) + ' more)';
+  document.getElementById('btn-plusten').innerText = '+10 Click Power | Cost: ' + plustencost + plustenInfo;
+
+  let autoInfo = (score >= oneautocost) ? ' [CAN BUY!]' : ' (Need ' + (oneautocost - Math.floor(score)) + ' more)';
+  document.getElementById('btn-plusoneauto').innerText = '+1 Autoclick/Sec | Cost: ' + oneautocost + autoInfo;
+  
+  let tenAutoInfo = (score >= tenautocost) ? ' [CAN BUY!]' : ' (Need ' + (tenautocost - Math.floor(score)) + ' more)';
+  document.getElementById('btn-plustenauto').innerText = '+10 Autoclick/Sec | Cost: ' + tenautocost + tenAutoInfo;
 }
 
-// Autoclick engine
-// Changed to add every quarter of a second to look smoother
+// Background Autoclick Engine using Timestamp Delta tracking
+let lastUpdate = Date.now();
+
 setInterval(function() {
+  let now = Date.now();
+  let deltaSeconds = (now - lastUpdate) / 1000;
+  
   if (autoclick > 0) {
-    score += (autoclick * 0.25);
+    score += autoclick * deltaSeconds;
     updateUI();
   }
+  
+  lastUpdate = now;
 }, 250);
 
-// Panic function to google classroom
+// Catches up immediately when switching tabs back
+document.addEventListener("visibilitychange", function() {
+  if (!document.hidden) {
+    let now = Date.now();
+    let deltaSeconds = (now - lastUpdate) / 1000;
+    
+    if (autoclick > 0) {
+      score += autoclick * deltaSeconds;
+      updateUI();
+    }
+    lastUpdate = now;
+  }
+});
+
+// Panic function to Google Classroom
 function panic() {
   window.open('https://classroom.google.com', '_self');
 }
 
-// Event listeners
+// Global Key Listeners
 window.addEventListener("keydown", function(event) {
   if (event.key === "Escape" || event.key === "Esc") { panic(); }
 });
@@ -304,7 +307,7 @@ window.addEventListener("keydown", function(event) {
   }
 });
 
-// Run an initial interface evaluation calculation on start
+// Run initial UI load
 updateUI();
 </script>
 
